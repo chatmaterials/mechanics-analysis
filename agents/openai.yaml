@@ -1,0 +1,5 @@
+interface:
+  display_name: "Mechanics Analysis"
+  short_description: "Analyze EOS, elastic, and stress results"
+  brand_color: "#1D4ED8"
+  default_prompt: "Use $mechanics-analysis to analyze equation-of-state, elastic, or stress data from DFT results."
