@@ -10,6 +10,16 @@ from analyze_equation_of_state import analyze as analyze_eos
 from analyze_stress_state import analyze as analyze_stress
 
 
+def screening_note(elastic: dict[str, object] | None, stress: dict[str, object] | None) -> str:
+    if elastic is None:
+        return "Elastic screening is incomplete without a 6x6 tensor."
+    if not elastic["mechanically_stable_heuristic"]:
+        return "The elastic tensor fails a positive-definite heuristic check, so this case should not be screened as mechanically stable."
+    if stress is not None and float(stress["von_mises_like_GPa"]) > 5.0:
+        return "The tensor looks stable, but the residual stress is still high enough that the structure may need additional relaxation."
+    return f"The tensor passes a simple stability heuristic and looks `{elastic['ductility_hint']}` by the Pugh-ratio descriptor."
+
+
 def render_markdown(eos: dict[str, object] | None, elastic: dict[str, object] | None, stress: dict[str, object] | None) -> str:
     lines = ["# Mechanics Analysis Report", ""]
     if eos is not None:
@@ -28,6 +38,11 @@ def render_markdown(eos: dict[str, object] | None, elastic: dict[str, object] | 
                 "## Elastic Tensor",
                 f"- Voigt bulk modulus (GPa): `{elastic['bulk_modulus_voigt_GPa']:.4f}`",
                 f"- Voigt shear modulus (GPa): `{elastic['shear_modulus_voigt_GPa']:.4f}`",
+                f"- Hill bulk modulus (GPa): `{elastic['bulk_modulus_hill_GPa']:.4f}`",
+                f"- Hill shear modulus (GPa): `{elastic['shear_modulus_hill_GPa']:.4f}`",
+                f"- Pugh ratio: `{elastic['pugh_ratio']:.4f}`",
+                f"- Ductility hint: `{elastic['ductility_hint']}`",
+                f"- Stable heuristic: `{elastic['mechanically_stable_heuristic']}`",
                 "",
             ]
         )
@@ -40,6 +55,7 @@ def render_markdown(eos: dict[str, object] | None, elastic: dict[str, object] | 
                 "",
             ]
         )
+    lines.extend(["## Screening Note", f"- {screening_note(elastic, stress)}", ""])
     return "\n".join(lines).rstrip() + "\n"
 
 
