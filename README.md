@@ -1,5 +1,7 @@
 # mechanics-analysis
 
+[![CI](https://img.shields.io/github/actions/workflow/status/chatmaterials/mechanics-analysis/ci.yml?branch=main&label=CI)](https://github.com/chatmaterials/mechanics-analysis/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/chatmaterials/mechanics-analysis?display_name=tag)](https://github.com/chatmaterials/mechanics-analysis/releases)
+
 Standalone skill for mechanics-relevant DFT result analysis.
 
 ## Install
