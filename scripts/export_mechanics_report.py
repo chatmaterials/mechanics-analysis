@@ -17,7 +17,7 @@ def screening_note(elastic: dict[str, object] | None, stress: dict[str, object] 
         return "The elastic tensor fails a positive-definite heuristic check, so this case should not be screened as mechanically stable."
     if stress is not None and float(stress["von_mises_like_GPa"]) > 5.0:
         return "The tensor looks stable, but the residual stress is still high enough that the structure may need additional relaxation."
-    return f"The tensor passes a simple stability heuristic and looks `{elastic['ductility_hint']}` by the Pugh-ratio descriptor."
+    return f"The tensor passes a simple stability heuristic, looks `{elastic['ductility_hint']}`, and falls in the `{elastic['hardness_class']}` regime by the compact hardness estimate."
 
 
 def render_markdown(eos: dict[str, object] | None, elastic: dict[str, object] | None, stress: dict[str, object] | None) -> str:
@@ -41,6 +41,11 @@ def render_markdown(eos: dict[str, object] | None, elastic: dict[str, object] | 
                 f"- Hill bulk modulus (GPa): `{elastic['bulk_modulus_hill_GPa']:.4f}`",
                 f"- Hill shear modulus (GPa): `{elastic['shear_modulus_hill_GPa']:.4f}`",
                 f"- Pugh ratio: `{elastic['pugh_ratio']:.4f}`",
+                f"- Universal anisotropy index: `{elastic['universal_anisotropy_index']:.4f}`" if elastic["universal_anisotropy_index"] is not None else "- Universal anisotropy index: `n/a`",
+                f"- Zener ratio: `{elastic['zener_ratio']:.4f}`" if elastic["zener_ratio"] is not None else "- Zener ratio: `n/a`",
+                f"- Cauchy pressure (GPa): `{elastic['cauchy_pressure_GPa']:.4f}`",
+                f"- Hardness estimate (GPa): `{elastic['hardness_estimate_GPa']:.4f}`" if elastic["hardness_estimate_GPa"] is not None else "- Hardness estimate (GPa): `n/a`",
+                f"- Hardness class: `{elastic['hardness_class']}`" if elastic["hardness_class"] is not None else "- Hardness class: `n/a`",
                 f"- Ductility hint: `{elastic['ductility_hint']}`",
                 f"- Stable heuristic: `{elastic['mechanically_stable_heuristic']}`",
                 "",
@@ -51,7 +56,9 @@ def render_markdown(eos: dict[str, object] | None, elastic: dict[str, object] | 
             [
                 "## Stress State",
                 f"- Mean normal stress (GPa): `{stress['mean_normal_stress_GPa']:.4f}`",
+                f"- Hydrostatic pressure (GPa): `{stress['hydrostatic_pressure_GPa']:.4f}`",
                 f"- Von-Mises-like stress (GPa): `{stress['von_mises_like_GPa']:.4f}`",
+                f"- Stress state class: `{stress['stress_state_class']}`",
                 "",
             ]
         )

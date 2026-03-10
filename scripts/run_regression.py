@@ -34,12 +34,15 @@ def main() -> None:
     ensure(abs(elastic["bulk_modulus_voigt_GPa"] - 146.6666667) < 1e-3, "mechanics-analysis should summarize the elastic tensor")
     ensure(elastic["mechanically_stable_heuristic"], "mechanics-analysis should identify the reference elastic tensor as stable")
     ensure(elastic["bulk_modulus_hill_GPa"] > 140.0, "mechanics-analysis should compute the Hill bulk modulus")
+    ensure(elastic["hardness_class"] == "moderate-hardness-like", "mechanics-analysis should classify the reference hardness scale")
     stress = run_json("scripts/analyze_stress_state.py", "fixtures/stress/stress_tensor.dat", "--json")
     ensure(abs(stress["mean_normal_stress_GPa"] - 10.0) < 1e-6, "mechanics-analysis should compute mean stress")
+    ensure(stress["stress_state_class"] == "moderately-stressed-like", "mechanics-analysis should classify the residual stress scale")
     ranked = run_json(
         "scripts/compare_mechanical_candidates.py",
         "fixtures",
         "fixtures/candidates/soft",
+        "fixtures/candidates/hard-brittle",
         "--bulk-min",
         "120",
         "--bulk-max",

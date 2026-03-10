@@ -23,10 +23,21 @@ def analyze(path: Path) -> dict[str, object]:
         0.5 * ((sxx - syy) ** 2 + (syy - szz) ** 2 + (szz - sxx) ** 2)
         + 3.0 * (sxy**2 + syz**2 + szx**2)
     ) ** 0.5
+    hydrostatic_pressure = -mean
+    ratio = von_mises / abs(mean) if abs(mean) > 1e-14 else None
+    if von_mises < 2.0:
+        stress_class = "well-relaxed-like"
+    elif von_mises < 8.0:
+        stress_class = "moderately-stressed-like"
+    else:
+        stress_class = "high-residual-stress-like"
     return {
         "path": str(path),
         "mean_normal_stress_GPa": mean,
+        "hydrostatic_pressure_GPa": hydrostatic_pressure,
         "von_mises_like_GPa": von_mises,
+        "deviatoric_to_mean_ratio": ratio,
+        "stress_state_class": stress_class,
         "observations": ["Mean normal stress and a von-Mises-like equivalent stress were computed."],
     }
 
