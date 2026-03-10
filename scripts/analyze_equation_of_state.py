@@ -59,12 +59,26 @@ def analyze(path: Path) -> dict[str, object]:
     v0 = -b / (2.0 * a)
     e0 = a * v0 * v0 + b * v0 + c
     bulk_gpa = v0 * (2.0 * a) * GPA_PER_EV_A3
+    residuals = [a * v * v + b * v + c - e for v, e in rows]
+    rmse_eV = (sum(value * value for value in residuals) / len(residuals)) ** 0.5
+    max_abs_residual_meV = max(abs(value) for value in residuals) * 1000.0
+    compressibility_tpa = 1000.0 / bulk_gpa if abs(bulk_gpa) > 1e-14 else None
+    if max_abs_residual_meV < 1.0:
+        quality = "exact-like"
+    elif max_abs_residual_meV < 5.0:
+        quality = "good-fit-like"
+    else:
+        quality = "noisy-fit-like"
     return {
         "path": str(path),
         "equilibrium_volume_A3": v0,
         "minimum_energy_eV": e0,
         "quadratic_a": a,
         "bulk_modulus_GPa": bulk_gpa,
+        "compressibility_TPa^-1": compressibility_tpa,
+        "fit_rmse_meV": rmse_eV * 1000.0,
+        "max_abs_residual_meV": max_abs_residual_meV,
+        "eos_quality_class": quality,
         "observations": ["Quadratic equation-of-state fit completed."],
     }
 

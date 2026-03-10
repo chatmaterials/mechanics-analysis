@@ -1,6 +1,6 @@
 ---
 name: "mechanics-analysis"
-description: "Use when the task is to analyze mechanics-relevant quantities from DFT results, including equation-of-state fits, bulk modulus estimates, elastic tensor summaries, elastic-stability heuristics, anisotropy and hardness descriptors, candidate ranking, stress-state interpretation, and compact markdown reports from finished calculations."
+description: "Use when the task is to analyze mechanics-relevant quantities from DFT results, including equation-of-state fits, EOS quality descriptors, bulk modulus estimates, elastic tensor summaries, elastic-stability heuristics, anisotropy and hardness descriptors, candidate ranking, stress-state interpretation, and compact markdown reports from finished calculations."
 ---
 
 # Mechanics Analysis
@@ -11,6 +11,7 @@ Use this skill for mechanics-oriented post-processing rather than generic workfl
 
 - fit an energy-volume curve
 - estimate an equilibrium volume and bulk modulus
+- judge whether the EOS fit quality looks exact-like, good-fit-like, or noisy
 - summarize an elastic tensor
 - screen elastic stability heuristics, anisotropy, hardness, and ductility descriptors
 - rank multiple mechanics candidates with a compact bulk-plus-stability heuristic
@@ -20,7 +21,7 @@ Use this skill for mechanics-oriented post-processing rather than generic workfl
 ## Use the bundled helpers
 
 - `scripts/analyze_equation_of_state.py`
-  Fit a simple quadratic equation of state and estimate the bulk modulus.
+  Fit a simple quadratic equation of state and estimate bulk modulus plus fit quality descriptors.
 - `scripts/analyze_elastic_tensor.py`
   Summarize a 6x6 elastic tensor, estimate Voigt/Reuss/Hill moduli, and report stability, anisotropy, hardness, and ductility heuristics.
 - `scripts/analyze_stress_state.py`

@@ -30,6 +30,7 @@ def main() -> None:
     eos = run_json("scripts/analyze_equation_of_state.py", "fixtures/eos/eos.dat", "--json")
     ensure(abs(eos["equilibrium_volume_A3"] - 10.0) < 1e-6, "mechanics-analysis should fit the EOS minimum")
     ensure(abs(eos["bulk_modulus_GPa"] - 64.087064832) < 1e-3, "mechanics-analysis should estimate the bulk modulus")
+    ensure(eos["eos_quality_class"] == "exact-like", "mechanics-analysis should classify the reference EOS quality")
     elastic = run_json("scripts/analyze_elastic_tensor.py", "fixtures/elastic/elastic_tensor.dat", "--json")
     ensure(abs(elastic["bulk_modulus_voigt_GPa"] - 146.6666667) < 1e-3, "mechanics-analysis should summarize the elastic tensor")
     ensure(elastic["mechanically_stable_heuristic"], "mechanics-analysis should identify the reference elastic tensor as stable")
@@ -41,6 +42,7 @@ def main() -> None:
     ranked = run_json(
         "scripts/compare_mechanical_candidates.py",
         "fixtures",
+        "fixtures/candidates/noisy-eos",
         "fixtures/candidates/soft",
         "fixtures/candidates/hard-brittle",
         "--bulk-min",

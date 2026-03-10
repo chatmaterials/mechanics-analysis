@@ -29,6 +29,9 @@ def render_markdown(eos: dict[str, object] | None, elastic: dict[str, object] | 
                 f"- Equilibrium volume (A^3): `{eos['equilibrium_volume_A3']:.4f}`",
                 f"- Minimum energy (eV): `{eos['minimum_energy_eV']:.6f}`",
                 f"- Bulk modulus (GPa): `{eos['bulk_modulus_GPa']:.4f}`",
+                f"- Compressibility (TPa^-1): `{eos['compressibility_TPa^-1']:.4f}`" if eos["compressibility_TPa^-1"] is not None else "- Compressibility (TPa^-1): `n/a`",
+                f"- EOS quality: `{eos['eos_quality_class']}`",
+                f"- Max residual (meV): `{eos['max_abs_residual_meV']:.4f}`",
                 "",
             ]
         )

@@ -45,11 +45,15 @@ def analyze_case(root: Path, bulk_min: float, bulk_max: float) -> dict[str, obje
     stress_penalty = float(stress["von_mises_like_GPa"]) if stress is not None else 0.0
     anisotropy_penalty = max(0.0, float(elastic["universal_anisotropy_index"]) - 1.0) if elastic["universal_anisotropy_index"] is not None else 0.0
     ductility_penalty = 5.0 if elastic["ductility_hint"] == "brittle-like" else 0.0
-    score = bulk_penalty + stability_penalty + 0.1 * stress_penalty + anisotropy_penalty + ductility_penalty
+    eos_penalty = float(eos["max_abs_residual_meV"]) / 5.0
+    score = bulk_penalty + stability_penalty + 0.1 * stress_penalty + anisotropy_penalty + ductility_penalty + eos_penalty
     return {
         "case": root.name,
         "path": str(root),
         "equilibrium_volume_A3": eos["equilibrium_volume_A3"],
+        "compressibility_TPa^-1": eos["compressibility_TPa^-1"],
+        "eos_quality_class": eos["eos_quality_class"],
+        "max_abs_residual_meV": eos["max_abs_residual_meV"],
         "bulk_modulus_hill_GPa": bulk,
         "shear_modulus_hill_GPa": elastic["shear_modulus_hill_GPa"],
         "universal_anisotropy_index": elastic["universal_anisotropy_index"],
@@ -62,6 +66,7 @@ def analyze_case(root: Path, bulk_min: float, bulk_max: float) -> dict[str, obje
         "stress_penalty": stress_penalty,
         "anisotropy_penalty": anisotropy_penalty,
         "ductility_penalty": ductility_penalty,
+        "eos_penalty": eos_penalty,
         "screening_score": score,
     }
 
@@ -71,7 +76,7 @@ def analyze_cases(roots: list[Path], bulk_min: float, bulk_max: float) -> dict[s
     ranked = sorted(cases, key=lambda item: item["screening_score"])
     return {
         "target_bulk_window_GPa": [bulk_min, bulk_max],
-        "ranking_basis": "screening_score = bulk_penalty + stability_penalty + 0.1 * residual_stress + anisotropy_penalty + ductility_penalty",
+        "ranking_basis": "screening_score = bulk_penalty + stability_penalty + 0.1 * residual_stress + anisotropy_penalty + ductility_penalty + eos_penalty",
         "cases": ranked,
         "best_case": ranked[0]["case"] if ranked else None,
         "observations": [
